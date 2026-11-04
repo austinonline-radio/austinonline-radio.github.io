@@ -19,7 +19,12 @@ body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,
 .app{max-width:440px;margin:0 auto;padding:20px 20px 40px}
 header{display:flex;align-items:center;gap:12px;padding:8px 0 24px}
 .logo-text{font-weight:900;font-size:30px;letter-spacing:-1px;line-height:1}
-.tag{display:inline-block;background:var(--accent);color:#0F0F12;font-weight:800;font-size:12px;padding:3px 9px;border-radius:4px;transform:rotate(-4deg);margin-left:6px;vertical-align:middle}
+.brand{display:flex;flex-direction:column;align-items:flex-start;gap:7px}
+.tag{display:inline-block;background:var(--accent);color:#0F0F12;font-weight:800;font-size:12px;padding:3px 9px;border-radius:4px;transform:rotate(-4deg);transform-origin:left center}
+.wxh{margin-left:auto;display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:6px 12px;font-size:16px;font-weight:700;cursor:pointer}
+.wxh[hidden]{display:none}
+.wxh:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.wxh span:first-child{font-size:20px;line-height:1}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 20px;text-align:center}
 .live{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--muted)}
 .dot{width:9px;height:9px;border-radius:50%;background:var(--muted)}
@@ -40,10 +45,9 @@ input[type=range]{flex:1;accent-color:var(--primary)}
 .chip.sel{border-color:var(--accent);color:var(--accent)}
 .np{margin-top:10px;font-size:14px;font-weight:600;color:var(--accent);overflow-wrap:anywhere}
 .np[hidden]{display:none}
-.wx{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 18px;margin-top:16px}
+.wx{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin:0 0 16px}
 .wx[hidden]{display:none}
-.wx-i{font-size:38px;line-height:1}.wx-t{font-size:28px;font-weight:800;line-height:1}
-.wx-d{font-size:14px;margin-top:4px}.wx-c{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+.wx-d{font-size:14px}.wx-c{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
 .wx a{color:var(--muted)}
 h2{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:32px 0 12px}
 .item{display:flex;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px}
@@ -61,8 +65,13 @@ footer{margin-top:36px;text-align:center;font-size:12px;color:var(--muted)}
     <svg width="46" height="38" viewBox="0 0 46 38" aria-hidden="true">
       <g fill="#FF2D3A"><rect x="0" y="22" width="5" height="16" rx="2"/><rect x="7" y="14" width="5" height="24" rx="2"/><rect x="14" y="6" width="5" height="32" rx="2"/><rect x="21" y="0" width="5" height="38" rx="2" fill="#FF6B35"/><rect x="28" y="8" width="5" height="30" rx="2"/><rect x="35" y="16" width="5" height="22" rx="2"/><rect x="42" y="24" width="4" height="14" rx="2"/></g>
     </svg>
-    <div><span class="logo-text">austin</span><span class="tag">radio online</span></div>
+    <div class="brand"><span class="logo-text">austin</span><span class="tag">radio online</span></div>
+    <button class="wxh" id="wxh" type="button" hidden aria-expanded="false" aria-controls="wx" aria-label="Ver el clima"><span id="wxh-i"></span><span id="wxh-t"></span></button>
   </header>
+
+  <div class="wx" id="wx" hidden aria-live="polite">
+    <div class="wx-d" id="wx-d"></div><div class="wx-c" id="wx-c"></div>
+  </div>
 
   <section class="card" aria-label="Reproductor">
     <div class="live"><span class="dot"></span>EN VIVO</div>
@@ -77,26 +86,21 @@ footer{margin-top:36px;text-align:center;font-size:12px;color:var(--muted)}
     <div class="chips" id="sleep"><span class="sub" style="width:100%;margin:0">Apagar en</span></div>
   </section>
 
-  <div class="wx" id="wx" hidden aria-live="polite">
-    <div class="wx-i" id="wx-i"></div>
-    <div><div class="wx-t" id="wx-t"></div><div class="wx-d" id="wx-d"></div><div class="wx-c" id="wx-c"></div></div>
-  </div>
-
   <h2>Programación</h2>
   <div id="sched"></div>
 
   <h2>Contacto</h2>
   <div id="contact"></div>
 
-  <footer>© Austin Radio Online</footer>
+  <footer>© Austin Radio Online · Clima: <a href="https://open-meteo.com/" target="_blank" rel="noopener" style="color:inherit">Open-Meteo.com</a></footer>
 </div>
 
 <script>
 // ===== Completá estos datos =====
 const CONFIG = {
   streams: [
-    'https://uk18freenew.listen2myradio.com/live.mp3?typeportmount=ice_7357_stream_793515056',
-    'https://sapircast.caster.fm:15227/lOysa' // respaldo si el primero falla
+    'https://uk18freenew.listen2myradio.com/live.mp3?typeportmount=ice_7357_stream_793515056'
+    // Para sumar un respaldo, agregá acá otra dirección https de ESCUCHA (nunca una que pida usuario y contraseña)
   ],
   whatsapp: '',   // solo números con código de país, ej: 5493541000000
   instagram: '',  // URL completa
@@ -251,15 +255,19 @@ async function loadWeather() {
     const d = await r.json();
     const cur = d.current, day = d.daily;
     const [icon, text] = WX(cur.weather_code);
-    $('wx-i').textContent = icon;
-    $('wx-t').textContent = Math.round(cur.temperature_2m) + '°C';
+    $('wxh-i').textContent = icon;
+    $('wxh-t').textContent = Math.round(cur.temperature_2m) + '°';
     $('wx-d').textContent = w.city + ' · ' + text;
     $('wx-c').innerHTML = 'Máx ' + Math.round(day.temperature_2m_max[0]) + '° · Mín ' + Math.round(day.temperature_2m_min[0]) +
-      '° · Lluvia ' + day.precipitation_probability_max[0] + '% · Humedad ' + cur.relative_humidity_2m + '%<br>' +
-      '<a href="https://open-meteo.com/" target="_blank" rel="noopener">Datos del clima: Open-Meteo.com</a>';
-    $('wx').hidden = false;
+      '° · Lluvia ' + day.precipitation_probability_max[0] + '% · Humedad ' + cur.relative_humidity_2m + '%';
+    $('wxh').hidden = false;
   } catch (e) { /* si falla, la tarjeta queda oculta */ }
 }
+$('wxh').addEventListener('click', () => {
+  const p = $('wx');
+  p.hidden = !p.hidden;
+  $('wxh').setAttribute('aria-expanded', String(!p.hidden));
+});
 loadWeather();
 setInterval(loadWeather, 15 * 60 * 1000);
 
