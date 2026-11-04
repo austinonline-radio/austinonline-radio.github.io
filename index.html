@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Austin">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icon.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Austin Radio Online</title>
 <style>
 :root{--bg:#0F0F12;--surface:#1E1E24;--primary:#FF2D3A;--primary-hover:#E6232E;--accent:#FF6B35;--text:#F4F4F5;--muted:#A8A8B3;--border:#2A2A32;
@@ -38,6 +38,8 @@ input[type=range]{flex:1;accent-color:var(--primary)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
 .chip{background:transparent;border:1px solid var(--border);color:var(--text);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer}
 .chip.sel{border-color:var(--accent);color:var(--accent)}
+.np{margin-top:10px;font-size:14px;font-weight:600;color:var(--accent);overflow-wrap:anywhere}
+.np[hidden]{display:none}
 .wx{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px 18px;margin-top:16px}
 .wx[hidden]{display:none}
 .wx-i{font-size:38px;line-height:1}.wx-t{font-size:28px;font-weight:800;line-height:1}
@@ -69,6 +71,7 @@ footer{margin-top:36px;text-align:center;font-size:12px;color:var(--muted)}
       <svg id="pause-i" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
     </button>
     <p id="status" role="status">Tocá para escuchar</p>
+    <p class="np" id="np" hidden></p>
     <p class="sub" id="sleepinfo">Donde vive la música</p>
     <div class="row"><span>Volumen</span><input type="range" id="vol" min="0" max="100" value="80" aria-label="Volumen"></div>
     <div class="chips" id="sleep"><span class="sub" style="width:100%;margin:0">Apagar en</span></div>
@@ -99,6 +102,10 @@ const CONFIG = {
   instagram: '',  // URL completa
   facebook: '',   // URL completa
   schedule: [],   // ej: [{ time: '08:00', name: 'Buen día Austin' }]
+  // Direcciones (https) donde tu servidor publica el tema que suena. Si ninguna responde, no se muestra nada.
+  nowPlaying: [
+    'https://uk18freenew.listen2myradio.com/status-json.xsl'
+  ],
   weather: { city: 'Cruz del Eje', lat: -30.7256, lon: -64.8067 } // poné null para ocultar el clima
 };
 // =================================
@@ -106,7 +113,7 @@ const CONFIG = {
 const $ = (id) => document.getElementById(id);
 const audio = new Audio();
 audio.preload = 'none';
-let idx = 0, playing = false, retries = 0, sleepTimer = null;
+let idx = 0, playing = false, retries = 0, sleepTimer = null, npTimer = null, lastTitle = '';
 
 function setStatus(t) { $('status').textContent = t; }
 function paint() {
@@ -120,6 +127,7 @@ function start() {
 }
 function stop(msg) {
   playing = false;
+  stopTitlePolling();
   audio.pause(); audio.removeAttribute('src'); audio.load();
   paint(); setStatus(msg || 'Tocá para escuchar');
 }
@@ -129,7 +137,10 @@ function fail() {
   if (retries < 2) { retries++; idx = 0; setTimeout(() => playing && start(), 1500); return; }
   retries = 0; idx = 0; stop('No se pudo conectar. Probá de nuevo.');
 }
-audio.addEventListener('playing', () => { retries = 0; setStatus('Escuchando en vivo'); });
+audio.addEventListener('playing', () => {
+  retries = 0; setStatus('Escuchando en vivo');
+  if (!npTimer && CONFIG.nowPlaying && CONFIG.nowPlaying.length) startTitlePolling();
+});
 audio.addEventListener('waiting', () => playing && setStatus('Conectando…'));
 audio.addEventListener('error', fail);
 $('play').addEventListener('click', () => (playing ? stop() : start()));
@@ -140,7 +151,7 @@ audio.volume = 0.8;
 if ('mediaSession' in navigator) {
   navigator.mediaSession.metadata = new MediaMetadata({
     title: 'Austin Radio Online', artist: 'En vivo',
-    artwork: [{ src: 'icon.svg', sizes: '512x512', type: 'image/svg+xml' }]
+    artwork: [{ src: 'icon-512.png', sizes: '512x512', type: 'image/png' }]
   });
   navigator.mediaSession.setActionHandler('play', start);
   navigator.mediaSession.setActionHandler('pause', () => stop());
@@ -178,6 +189,50 @@ if (CONFIG.whatsapp) links.push(`<a class="btn wa" href="https://wa.me/${esc(CON
 if (CONFIG.instagram) links.push(`<a class="btn" href="${esc(CONFIG.instagram)}" target="_blank" rel="noopener">Instagram</a>`);
 if (CONFIG.facebook) links.push(`<a class="btn" href="${esc(CONFIG.facebook)}" target="_blank" rel="noopener">Facebook</a>`);
 $('contact').innerHTML = links.length ? `<div class="btns">${links.join('')}</div>` : '<p class="empty">Muy pronto vas a poder escribirnos desde acá.</p>';
+
+// Tema que está sonando
+function pickTitle(d) {
+  if (typeof d === 'string') return /^\s*</.test(d) ? '' : d.trim();
+  if (!d || typeof d !== 'object') return '';
+  if (d.icestats) {
+    let src = d.icestats.source;
+    if (Array.isArray(src)) {
+      src = src.find((x) => /stream/.test(x.listenurl || '') && (x.title || x.yp_currently_playing)) || src.find((x) => x.title || x.yp_currently_playing);
+    }
+    return src ? String(src.title || src.yp_currently_playing || '').trim() : '';
+  }
+  const v = d.songtitle || d.title || d.song || d.current_song || d.nowplaying || d.now_playing || d.text;
+  if (typeof v === 'string') return v.trim();
+  return v && typeof v === 'object' ? pickTitle(v) : '';
+}
+function showTitle(t) {
+  t = (t || '').replace(/\s+/g, ' ').trim().slice(0, 140);
+  if (t === lastTitle) return;
+  lastTitle = t;
+  $('np').textContent = t ? '♪ ' + t : '';
+  $('np').hidden = !t;
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: t || 'Austin Radio Online', artist: t ? 'Austin Radio Online' : 'En vivo',
+      artwork: [{ src: 'icon-512.png', sizes: '512x512', type: 'image/png' }]
+    });
+  }
+}
+async function fetchTitle() {
+  for (const u of CONFIG.nowPlaying || []) {
+    try {
+      const r = await fetch(u, { cache: 'no-store' });
+      if (!r.ok) continue;
+      const txt = await r.text();
+      let d = txt;
+      try { d = JSON.parse(txt); } catch (e) { /* texto plano */ }
+      const t = pickTitle(d);
+      if (t) { showTitle(t); return; }
+    } catch (e) { /* probar la siguiente dirección */ }
+  }
+}
+function startTitlePolling() { clearInterval(npTimer); fetchTitle(); npTimer = setInterval(fetchTitle, 20000); }
+function stopTitlePolling() { clearInterval(npTimer); npTimer = null; showTitle(''); }
 
 // Clima (Open-Meteo)
 const WX = (c) => c === 0 ? ['☀️', 'Despejado'] : c === 1 ? ['🌤️', 'Mayormente despejado'] : c === 2 ? ['⛅', 'Parcialmente nublado'] : c === 3 ? ['☁️', 'Nublado']
