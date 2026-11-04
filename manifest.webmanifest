@@ -1,0 +1,14 @@
+{
+  "name": "Austin Radio Online",
+  "short_name": "Austin",
+  "description": "Escuchá Austin Radio Online en vivo",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F0F12",
+  "theme_color": "#0F0F12",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
