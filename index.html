@@ -172,13 +172,9 @@ function start() {
   audio.src = CONFIG.streams[idx];
   audio.crossOrigin = 'anonymous';
   
-  const playPromise = audio.play();
-  if (playPromise !== undefined) {
-    playPromise.catch(() => {
-      // Reintento de reproducción
-      fail();
-    });
-  }
+  audio.play().catch(() => {
+    fail();
+  });
 }
 
 function stop(msg) {
@@ -221,6 +217,21 @@ audio.addEventListener('error', fail);
 
 $('play').addEventListener('click', () => (playing ? stop() : start()));
 $('vol').addEventListener('input', (e) => { if(audio) audio.volume = e.target.value / 100; });
+
+// AUTOPLAY AL CARGAR LA PÁGINA
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    start();
+  }, 500);
+});
+
+// Si el navegador bloquea el autoplay, se reproduce automáticamente al primer toque del usuario en la pantalla
+document.addEventListener('click', function initAudio() {
+  if (!playing && audio.paused) {
+    start();
+  }
+  document.removeEventListener('click', initAudio);
+}, { once: true });
 
 if ('mediaSession' in navigator) {
   navigator.mediaSession.metadata = new MediaMetadata({
@@ -337,4 +348,3 @@ setInterval(loadWeather, 15 * 60 * 1000);
 </script>
 </body>
 </html>
-```[cite: 1]
