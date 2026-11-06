@@ -17,13 +17,17 @@ color-scheme:dark;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding-bottom:120px;-webkit-tap-highlight-color:transparent}
 .app{max-width:440px;margin:0 auto;padding:20px}
 
-/* Encabezado con Clima */
-header{display:flex;align-items:center;justify-content:flex-end;padding:8px 0 16px}
+/* Encabezado: Logo a la izquierda y Clima a la derecha */
+header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px}
+.header-brand{display:flex;align-items:center;gap:8px}
+.header-logo-text{font-weight:900;font-size:20px;letter-spacing:-0.5px;line-height:1;text-transform:lowercase}
+.header-tag{display:inline-block;background:var(--accent);color:#0F0F12;font-weight:800;font-size:10px;padding:2px 6px;border-radius:3px;transform:rotate(-3deg)}
+
 .wxh{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:700;cursor:pointer}
 .wxh[hidden]{display:none}
 
-/* Sección Central: Ecualizador + Logo */
-.hero{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 0 30px;text-align:center}
+/* Sección Central: Ecualizador + Logo principal */
+.hero{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 0 30px;text-align:center}
 .equalizer-icon{width:140px;height:90px;margin-bottom:20px}
 .brand-main{display:flex;flex-direction:column;align-items:center;gap:8px}
 .logo-text{font-weight:900;font-size:42px;letter-spacing:-1.5px;line-height:1;text-transform:lowercase}
@@ -76,6 +80,12 @@ footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted)}
 
 <div class="app" id="app">
   <header>
+    <!-- Logo en la cabecera (izquierda) -->
+    <div class="header-brand">
+      <span class="header-logo-text">austin</span>
+      <span class="header-tag">radio online</span>
+    </div>
+    <!-- Widget del clima (derecha) -->
     <button class="wxh" id="wxh" type="button" hidden aria-expanded="false" aria-controls="wx"><span id="wxh-i"></span><span id="wxh-t"></span></button>
   </header>
 
@@ -225,7 +235,7 @@ window.addEventListener('load', () => {
   }, 500);
 });
 
-// Si el navegador bloquea el autoplay, se reproduce automáticamente al primer toque del usuario en la pantalla
+// Si el navegador bloquea el autoplay por políticas de audio, iniciará al primer toque en la pantalla
 document.addEventListener('click', function initAudio() {
   if (!playing && audio.paused) {
     start();
