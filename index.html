@@ -1,4 +1,4 @@
-	<!doctype html>
+<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
@@ -12,79 +12,95 @@
 <title>Austin Radio Online</title>
 <style>
 :root{--bg:#0F0F12;--surface:#1E1E24;--primary:#FF2D3A;--primary-hover:#E6232E;--accent:#FF6B35;--text:#F4F4F5;--muted:#A8A8B3;--border:#2A2A32;
-color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box;margin:0}
-body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;-webkit-tap-highlight-color:transparent}
-.app{max-width:440px;margin:0 auto;padding:20px 20px 40px}
-header{display:flex;align-items:center;gap:12px;padding:8px 0 24px}
-.logo-text{font-weight:900;font-size:30px;letter-spacing:-1px;line-height:1}
-.brand{display:flex;flex-direction:column;align-items:flex-start;gap:7px}
-.tag{display:inline-block;background:var(--accent);color:#0F0F12;font-weight:800;font-size:12px;padding:3px 9px;border-radius:4px;transform:rotate(-4deg);transform-origin:left center}
-.wxh{margin-left:auto;display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:6px 12px;font-size:16px;font-weight:700;cursor:pointer}
+color-scheme:dark;box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding-bottom:120px;-webkit-tap-highlight-color:transparent}
+.app{max-width:440px;margin:0 auto;padding:20px}
+
+/* Encabezado con Clima */
+header{display:flex;align-items:center;justify-content:flex-end;padding:8px 0 16px}
+.wxh{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:700;cursor:pointer}
 .wxh[hidden]{display:none}
-.wxh:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-.wxh span:first-child{font-size:20px;line-height:1}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 20px;text-align:center}
-.live{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:1.5px;color:var(--muted)}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--muted)}
-.on .dot{background:var(--primary);animation:pulse 1.4s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,45,58,.6)}100%{box-shadow:0 0 0 10px rgba(255,45,58,0)}}
-.on .live{color:var(--text)}
-#play{margin:26px auto 14px;width:116px;height:116px;border-radius:50%;border:0;background:var(--primary);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 30px rgba(255,45,58,.35);transition:transform .15s,background .15s}
-#play:hover{background:var(--primary-hover)}#play:active{transform:scale(.95)}
-#play:focus-visible,.chip:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-#play svg{width:48px;height:48px;fill:currentColor}
-#pause-i{display:none}.on #pause-i{display:block}.on #play-i{display:none}
-#status{font-size:15px;min-height:22px;color:var(--text)}
-.sub{font-size:13px;color:var(--muted);margin-top:4px}
-.row{display:flex;align-items:center;gap:12px;margin-top:24px;color:var(--muted);font-size:13px}
-input[type=range]{flex:1;accent-color:var(--primary)}
-.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
-.chip{background:transparent;border:1px solid var(--border);color:var(--text);border-radius:999px;padding:7px 14px;font-size:13px;cursor:pointer}
-.chip.sel{border-color:var(--accent);color:var(--accent)}
-.np{margin-top:10px;font-size:14px;font-weight:600;color:var(--accent);overflow-wrap:anywhere}
-.np[hidden]{display:none}
+
+/* Sección Central: Ecualizador + Logo */
+.hero{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 0 30px;text-align:center}
+.equalizer-icon{width:140px;height:90px;margin-bottom:20px}
+.brand-main{display:flex;flex-direction:column;align-items:center;gap:8px}
+.logo-text{font-weight:900;font-size:42px;letter-spacing:-1.5px;line-height:1;text-transform:lowercase}
+.tag{display:inline-block;background:var(--accent);color:#0F0F12;font-weight:800;font-size:14px;padding:4px 12px;border-radius:4px;transform:rotate(-3deg)}
+
+/* Widgets e Información */
 .wx{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin:0 0 16px}
 .wx[hidden]{display:none}
 .wx-d{font-size:14px}.wx-c{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
-.wx a{color:var(--muted)}
-h2{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:32px 0 12px}
+
+h2{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:24px 0 12px}
 .item{display:flex;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:8px}
 .item b{color:var(--accent);min-width:52px}
 .empty{color:var(--muted);font-size:14px;border:1px dashed var(--border);border-radius:14px;padding:16px;text-align:center}
 .btns{display:flex;flex-wrap:wrap;gap:10px}
 .btn{flex:1;min-width:130px;text-align:center;text-decoration:none;color:var(--text);border:1px solid var(--text);border-radius:12px;padding:12px;font-size:14px;font-weight:600}
 .btn.wa{background:var(--primary);border-color:var(--primary)}
-footer{margin-top:36px;text-align:center;font-size:12px;color:var(--muted)}
+
+/* Reproductor Fijo en la parte Inferior */
+.player-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;z-index:1000;box-shadow:0 -5px 20px rgba(0,0,0,.5)}
+.player-container{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.player-main{display:flex;align-items:center;gap:12px}
+
+#play{width:48px;height:48px;min-width:48px;border-radius:50%;border:0;background:var(--primary);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 12px rgba(255,45,58,.4);transition:transform .15s}
+#play:active{transform:scale(.95)}
+#play svg{width:24px;height:24px;fill:currentColor}
+#pause-i{display:none}.on #pause-i{display:block}.on #play-i{display:none}
+
+.player-info{flex:1;min-width:0}
+.live-badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:800;letter-spacing:1px;color:var(--muted)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.on .dot{background:var(--primary);animation:pulse 1.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,45,58,.6)}100%{box-shadow:0 0 0 8px rgba(255,45,58,0)}}
+.on .live-badge{color:var(--text)}
+
+#status{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np{font-size:12px;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np[hidden]{display:none}
+
+.controls-row{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
+input[type=range]{flex:1;accent-color:var(--primary);height:4px}
+.chips{display:flex;gap:6px}
+.chip{background:transparent;border:1px solid var(--border);color:var(--text);border-radius:999px;padding:3px 8px;font-size:11px;cursor:pointer}
+.chip.sel{border-color:var(--accent);color:var(--accent)}
+
+footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
+
 <div class="app" id="app">
   <header>
-    <svg width="46" height="38" viewBox="0 0 46 38" aria-hidden="true">
-      <g fill="#FF2D3A"><rect x="0" y="22" width="5" height="16" rx="2"/><rect x="7" y="14" width="5" height="24" rx="2"/><rect x="14" y="6" width="5" height="32" rx="2"/><rect x="21" y="0" width="5" height="38" rx="2" fill="#FF6B35"/><rect x="28" y="8" width="5" height="30" rx="2"/><rect x="35" y="16" width="5" height="22" rx="2"/><rect x="42" y="24" width="4" height="14" rx="2"/></g>
-    </svg>
-    <div class="brand"><span class="logo-text">austin</span><span class="tag">radio online</span></div>
-    <button class="wxh" id="wxh" type="button" hidden aria-expanded="false" aria-controls="wx" aria-label="Ver el clima"><span id="wxh-i"></span><span id="wxh-t"></span></button>
+    <button class="wxh" id="wxh" type="button" hidden aria-expanded="false" aria-controls="wx"><span id="wxh-i"></span><span id="wxh-t"></span></button>
   </header>
 
   <div class="wx" id="wx" hidden aria-live="polite">
     <div class="wx-d" id="wx-d"></div><div class="wx-c" id="wx-c"></div>
   </div>
 
-  <section class="card" aria-label="Reproductor">
-    <div class="live"><span class="dot"></span>EN VIVO</div>
-    <button id="play" aria-label="Escuchar en vivo">
-      <svg id="play-i" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      <svg id="pause-i" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
-    </button>
-    <p id="status" role="status">Tocá para escuchar</p>
-    <p class="np" id="np" hidden></p>
-    <p class="sub" id="sleepinfo">Donde vive la música</p>
-    <div class="row"><span>Volumen</span><input type="range" id="vol" min="0" max="100" value="80" aria-label="Volumen"></div>
-    <div class="chips" id="sleep"><span class="sub" style="width:100%;margin:0">Apagar en</span></div>
-  </section>
+  <!-- Barra de sonido naranja ARRIBA y Marca AUSTIN ABAJO -->
+  <div class="hero">
+    <svg class="equalizer-icon" viewBox="0 0 46 38" aria-hidden="true">
+      <g fill="#FF6B35">
+        <rect x="0" y="22" width="5" height="16" rx="2"/>
+        <rect x="7" y="14" width="5" height="24" rx="2"/>
+        <rect x="14" y="6" width="5" height="32" rx="2"/>
+        <rect x="21" y="0" width="5" height="38" rx="2"/>
+        <rect x="28" y="8" width="5" height="30" rx="2"/>
+        <rect x="35" y="16" width="5" height="22" rx="2"/>
+        <rect x="42" y="24" width="4" height="14" rx="2"/>
+      </g>
+    </svg>
+    <div class="brand-main">
+      <span class="logo-text">austin</span>
+      <span class="tag">radio online</span>
+    </div>
+  </div>
 
   <h2>Programación</h2>
   <div id="sched"></div>
@@ -95,64 +111,117 @@ footer{margin-top:36px;text-align:center;font-size:12px;color:var(--muted)}
   <footer>© Austin Radio Online · Clima: <a href="https://open-meteo.com/" target="_blank" rel="noopener" style="color:inherit">Open-Meteo.com</a></footer>
 </div>
 
+<!-- Reproductor Inferior Fijo -->
+<div class="player-bar">
+  <div class="player-container">
+    <div class="player-main">
+      <button id="play" aria-label="Escuchar en vivo">
+        <svg id="play-i" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="pause-i" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+      </button>
+      <div class="player-info">
+        <div class="live-badge"><span class="dot"></span>EN VIVO</div>
+        <p id="status">Tocá para escuchar</p>
+        <p class="np" id="np" hidden></p>
+      </div>
+    </div>
+    <div class="controls-row">
+      <span>Vol.</span>
+      <input type="range" id="vol" min="0" max="100" value="80" aria-label="Volumen">
+      <div class="chips" id="sleep"></div>
+    </div>
+  </div>
+</div>
+
 <script>
-// ===== Completá estos datos =====
 const CONFIG = {
   streams: [
     'https://uk18freenew.listen2myradio.com/live.mp3?typeportmount=ice_30563_stream_511390628',
     'https://uk18freenew.listen2myradio.com/live.mp3?typeportmount=ice_7357_stream_793515056'
   ],
-  whatsapp: '',   // solo números con código de país, ej: 5493541000000
-  instagram: '',  // URL completa
-  facebook: '',   // URL completa
-  schedule: [],   // ej: [{ time: '08:00', name: 'Buen día Austin' }]
-  // Direcciones (https) donde tu servidor publica el tema que suena. Si ninguna responde, no se muestra nada.
+  whatsapp: '',
+  instagram: '',
+  facebook: '',
+  schedule: [],
   nowPlaying: [
     'https://austinonline.pablocgonzalezcde.workers.dev/api',
     'https://austinonline.pablocgonzalezcde.workers.dev/'
   ],
-  weather: { city: 'Cruz del Eje', lat: -30.7256, lon: -64.8067 } // poné null para ocultar el clima
+  weather: { city: 'Cruz del Eje', lat: -30.7256, lon: -64.8067 }
 };
-// =================================
 
 const $ = (id) => document.getElementById(id);
-const audio = new Audio();
-audio.preload = 'none';
+let audio = new Audio();
 let idx = 0, playing = false, retries = 0, sleepTimer = null, npTimer = null, lastTitle = '';
 
 function setStatus(t) { $('status').textContent = t; }
 function paint() {
-  $('app').classList.toggle('on', playing);
+  document.body.classList.toggle('on', playing);
   $('play').setAttribute('aria-label', playing ? 'Pausar' : 'Escuchar en vivo');
 }
+
 function start() {
-  playing = true; paint(); setStatus('Conectando…');
+  playing = true; 
+  paint(); 
+  setStatus('Conectando…');
+  
+  if (!audio) {
+    audio = new Audio();
+  }
+  
   audio.src = CONFIG.streams[idx];
-  audio.play().catch(fail);
+  audio.crossOrigin = 'anonymous';
+  
+  const playPromise = audio.play();
+  if (playPromise !== undefined) {
+    playPromise.catch(() => {
+      // Reintento de reproducción
+      fail();
+    });
+  }
 }
+
 function stop(msg) {
   playing = false;
   stopTitlePolling();
-  audio.pause(); audio.removeAttribute('src'); audio.load();
-  paint(); setStatus(msg || 'Tocá para escuchar');
+  if (audio) {
+    audio.pause();
+    audio.removeAttribute('src');
+    audio.load();
+  }
+  paint(); 
+  setStatus(msg || 'Tocá para escuchar');
 }
+
 function fail() {
   if (!playing) return;
-  if (idx < CONFIG.streams.length - 1) { idx++; start(); return; }
-  if (retries < 2) { retries++; idx = 0; setTimeout(() => playing && start(), 1500); return; }
-  retries = 0; idx = 0; stop('No se pudo conectar. Probá de nuevo.');
+  if (idx < CONFIG.streams.length - 1) { 
+    idx++; 
+    start(); 
+    return; 
+  }
+  if (retries < 2) { 
+    retries++; 
+    idx = 0; 
+    setTimeout(() => playing && start(), 1500); 
+    return; 
+  }
+  retries = 0; 
+  idx = 0; 
+  stop('No se pudo conectar. Probá de nuevo.');
 }
+
 audio.addEventListener('playing', () => {
-  retries = 0; setStatus('Escuchando en vivo');
+  retries = 0; 
+  setStatus('Escuchando en vivo');
   if (!npTimer && CONFIG.nowPlaying && CONFIG.nowPlaying.length) startTitlePolling();
 });
 audio.addEventListener('waiting', () => playing && setStatus('Conectando…'));
 audio.addEventListener('error', fail);
-$('play').addEventListener('click', () => (playing ? stop() : start()));
-$('vol').addEventListener('input', (e) => { audio.volume = e.target.value / 100; });
-audio.volume = 0.8;
 
-// Controles en la pantalla de bloqueo
+$('play').addEventListener('click', () => (playing ? stop() : start()));
+$('vol').addEventListener('input', (e) => { if(audio) audio.volume = e.target.value / 100; });
+
 if ('mediaSession' in navigator) {
   navigator.mediaSession.metadata = new MediaMetadata({
     title: 'Austin Radio Online', artist: 'En vivo',
@@ -162,40 +231,35 @@ if ('mediaSession' in navigator) {
   navigator.mediaSession.setActionHandler('pause', () => stop());
 }
 
-// Temporizador para dormir
 [15, 30, 60].forEach((m) => {
   const b = document.createElement('button');
-  b.className = 'chip'; b.textContent = m + ' min';
+  b.className = 'chip'; 
+  b.textContent = m + 'm';
   b.onclick = () => {
     const was = b.classList.contains('sel');
     clearTimeout(sleepTimer);
     document.querySelectorAll('.chip').forEach((c) => c.classList.remove('sel'));
-    $('sleepinfo').textContent = 'Donde vive la música';
     if (was) return;
     b.classList.add('sel');
-    $('sleepinfo').textContent = 'Se apaga en ' + m + ' minutos';
     sleepTimer = setTimeout(() => {
       stop('Apagado automático');
-      b.classList.remove('sel'); $('sleepinfo').textContent = 'Donde vive la música';
+      b.classList.remove('sel');
     }, m * 60000);
   };
   $('sleep').appendChild(b);
 });
 
-// Programación
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 $('sched').innerHTML = CONFIG.schedule.length
   ? CONFIG.schedule.map((s) => `<div class="item"><b>${esc(s.time)}</b><span>${esc(s.name)}</span></div>`).join('')
   : '<p class="empty">La programación se publica pronto.</p>';
 
-// Contacto
 const links = [];
 if (CONFIG.whatsapp) links.push(`<a class="btn wa" href="https://wa.me/${esc(CONFIG.whatsapp)}" target="_blank" rel="noopener">WhatsApp</a>`);
 if (CONFIG.instagram) links.push(`<a class="btn" href="${esc(CONFIG.instagram)}" target="_blank" rel="noopener">Instagram</a>`);
 if (CONFIG.facebook) links.push(`<a class="btn" href="${esc(CONFIG.facebook)}" target="_blank" rel="noopener">Facebook</a>`);
 $('contact').innerHTML = links.length ? `<div class="btns">${links.join('')}</div>` : '<p class="empty">Muy pronto vas a poder escribirnos desde acá.</p>';
 
-// Tema que está sonando
 function pickTitle(d) {
   if (typeof d === 'string') return /^\s*</.test(d) ? '' : d.trim();
   if (!d || typeof d !== 'object') return '';
@@ -210,19 +274,15 @@ function pickTitle(d) {
   if (typeof v === 'string') return v.trim();
   return v && typeof v === 'object' ? pickTitle(v) : '';
 }
+
 function showTitle(t) {
   t = (t || '').replace(/\s+/g, ' ').trim().slice(0, 140);
   if (t === lastTitle) return;
   lastTitle = t;
   $('np').textContent = t ? '♪ ' + t : '';
   $('np').hidden = !t;
-  if ('mediaSession' in navigator) {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: t || 'Austin Radio Online', artist: t ? 'Austin Radio Online' : 'En vivo',
-      artwork: [{ src: 'icon-512.png', sizes: '512x512', type: 'image/png' }]
-    });
-  }
 }
+
 async function fetchTitle() {
   for (const u of CONFIG.nowPlaying || []) {
     try {
@@ -230,20 +290,21 @@ async function fetchTitle() {
       if (!r.ok) continue;
       const txt = await r.text();
       let d = txt;
-      try { d = JSON.parse(txt); } catch (e) { /* texto plano */ }
+      try { d = JSON.parse(txt); } catch (e) {}
       const t = pickTitle(d);
       if (t) { showTitle(t); return; }
-    } catch (e) { /* probar la siguiente dirección */ }
+    } catch (e) {}
   }
 }
+
 function startTitlePolling() { clearInterval(npTimer); fetchTitle(); npTimer = setInterval(fetchTitle, 20000); }
 function stopTitlePolling() { clearInterval(npTimer); npTimer = null; showTitle(''); }
 
-// Clima (Open-Meteo)
 const WX = (c) => c === 0 ? ['☀️', 'Despejado'] : c === 1 ? ['🌤️', 'Mayormente despejado'] : c === 2 ? ['⛅', 'Parcialmente nublado'] : c === 3 ? ['☁️', 'Nublado']
   : (c === 45 || c === 48) ? ['🌫️', 'Niebla'] : (c >= 51 && c <= 57) ? ['🌦️', 'Llovizna']
   : ((c >= 61 && c <= 67) || (c >= 80 && c <= 82)) ? ['🌧️', 'Lluvia']
   : ((c >= 71 && c <= 77) || c === 85 || c === 86) ? ['🌨️', 'Nieve'] : c >= 95 ? ['⛈️', 'Tormenta'] : ['🌡️', 'Clima'];
+
 async function loadWeather() {
   const w = CONFIG.weather;
   if (!w) return;
@@ -262,19 +323,17 @@ async function loadWeather() {
     $('wx-c').innerHTML = 'Máx ' + Math.round(day.temperature_2m_max[0]) + '° · Mín ' + Math.round(day.temperature_2m_min[0]) +
       '° · Lluvia ' + day.precipitation_probability_max[0] + '% · Humedad ' + cur.relative_humidity_2m + '%';
     $('wxh').hidden = false;
-  } catch (e) { /* si falla, la tarjeta queda oculta */ }
+  } catch (e) {}
 }
+
 $('wxh').addEventListener('click', () => {
   const p = $('wx');
   p.hidden = !p.hidden;
   $('wxh').setAttribute('aria-expanded', String(!p.hidden));
 });
+
 loadWeather();
 setInterval(loadWeather, 15 * 60 * 1000);
-
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
 </script>
 </body>
 </html>
