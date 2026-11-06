@@ -80,12 +80,10 @@ footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted)}
 
 <div class="app" id="app">
   <header>
-    <!-- Logo en la cabecera (izquierda) -->
     <div class="header-brand">
       <span class="header-logo-text">austin</span>
       <span class="header-tag">radio online</span>
     </div>
-    <!-- Widget del clima (derecha) -->
     <button class="wxh" id="wxh" type="button" hidden aria-expanded="false" aria-controls="wx"><span id="wxh-i"></span><span id="wxh-t"></span></button>
   </header>
 
@@ -93,7 +91,6 @@ footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted)}
     <div class="wx-d" id="wx-d"></div><div class="wx-c" id="wx-c"></div>
   </div>
 
-  <!-- Barra de sonido naranja ARRIBA y Marca AUSTIN ABAJO -->
   <div class="hero">
     <svg class="equalizer-icon" viewBox="0 0 46 38" aria-hidden="true">
       <g fill="#FF6B35">
@@ -121,7 +118,6 @@ footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted)}
   <footer>© Austin Radio Online · Clima: <a href="https://open-meteo.com/" target="_blank" rel="noopener" style="color:inherit">Open-Meteo.com</a></footer>
 </div>
 
-<!-- Reproductor Inferior Fijo -->
 <div class="player-bar">
   <div class="player-container">
     <div class="player-main">
@@ -227,21 +223,6 @@ audio.addEventListener('error', fail);
 
 $('play').addEventListener('click', () => (playing ? stop() : start()));
 $('vol').addEventListener('input', (e) => { if(audio) audio.volume = e.target.value / 100; });
-
-// AUTOPLAY AL CARGAR LA PÁGINA
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    start();
-  }, 500);
-});
-
-// Si el navegador bloquea el autoplay por políticas de audio, iniciará al primer toque en la pantalla
-document.addEventListener('click', function initAudio() {
-  if (!playing && audio.paused) {
-    start();
-  }
-  document.removeEventListener('click', initAudio);
-}, { once: true });
 
 if ('mediaSession' in navigator) {
   navigator.mediaSession.metadata = new MediaMetadata({
