@@ -142,23 +142,21 @@ footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted)}
 <script>
 const CONFIG = {
   streams: [
-    'https://uk18freenew.listen2myradio.com/live.mp3?typeportmount=ice_30563_stream_511390628',
-    'https://uk18freenew.listen2myradio.com/live.mp3?typeportmount=ice_7357_stream_793515056'
+    'https://austinonline.radiostream321.com',
+    'https://austinonline.radio12345.com',
+    'https://austinonline.radiostream123.com'
   ],
   whatsapp: '',
   instagram: '',
   facebook: '',
   schedule: [],
-  nowPlaying: [
-    'https://austinonline.pablocgonzalezcde.workers.dev/api',
-    'https://austinonline.pablocgonzalezcde.workers.dev/'
-  ],
+  nowPlaying: [],
   weather: { city: 'Cruz del Eje', lat: -30.7256, lon: -64.8067 }
 };
 
 const $ = (id) => document.getElementById(id);
 let audio = new Audio();
-let idx = 0, playing = false, retries = 0, sleepTimer = null, npTimer = null, lastTitle = '';
+let idx = 0, playing = false, retries = 0, sleepTimer = null;
 
 function setStatus(t) { $('status').textContent = t; }
 function paint() {
@@ -185,7 +183,6 @@ function start() {
 
 function stop(msg) {
   playing = false;
-  stopTitlePolling();
   if (audio) {
     audio.pause();
     audio.removeAttribute('src');
@@ -216,7 +213,6 @@ function fail() {
 audio.addEventListener('playing', () => {
   retries = 0; 
   setStatus('Escuchando en vivo');
-  if (!npTimer && CONFIG.nowPlaying && CONFIG.nowPlaying.length) startTitlePolling();
 });
 audio.addEventListener('waiting', () => playing && setStatus('Conectando…'));
 audio.addEventListener('error', fail);
@@ -261,46 +257,6 @@ if (CONFIG.whatsapp) links.push(`<a class="btn wa" href="https://wa.me/${esc(CON
 if (CONFIG.instagram) links.push(`<a class="btn" href="${esc(CONFIG.instagram)}" target="_blank" rel="noopener">Instagram</a>`);
 if (CONFIG.facebook) links.push(`<a class="btn" href="${esc(CONFIG.facebook)}" target="_blank" rel="noopener">Facebook</a>`);
 $('contact').innerHTML = links.length ? `<div class="btns">${links.join('')}</div>` : '<p class="empty">Muy pronto vas a poder escribirnos desde acá.</p>';
-
-function pickTitle(d) {
-  if (typeof d === 'string') return /^\s*</.test(d) ? '' : d.trim();
-  if (!d || typeof d !== 'object') return '';
-  if (d.icestats) {
-    let src = d.icestats.source;
-    if (Array.isArray(src)) {
-      src = src.find((x) => /stream/.test(x.listenurl || '') && (x.title || x.yp_currently_playing)) || src.find((x) => x.title || x.yp_currently_playing);
-    }
-    return src ? String(src.title || src.yp_currently_playing || '').trim() : '';
-  }
-  const v = d.songtitle || d.title || d.song || d.current_song || d.nowplaying || d.now_playing || d.text;
-  if (typeof v === 'string') return v.trim();
-  return v && typeof v === 'object' ? pickTitle(v) : '';
-}
-
-function showTitle(t) {
-  t = (t || '').replace(/\s+/g, ' ').trim().slice(0, 140);
-  if (t === lastTitle) return;
-  lastTitle = t;
-  $('np').textContent = t ? '♪ ' + t : '';
-  $('np').hidden = !t;
-}
-
-async function fetchTitle() {
-  for (const u of CONFIG.nowPlaying || []) {
-    try {
-      const r = await fetch(u, { cache: 'no-store' });
-      if (!r.ok) continue;
-      const txt = await r.text();
-      let d = txt;
-      try { d = JSON.parse(txt); } catch (e) {}
-      const t = pickTitle(d);
-      if (t) { showTitle(t); return; }
-    } catch (e) {}
-  }
-}
-
-function startTitlePolling() { clearInterval(npTimer); fetchTitle(); npTimer = setInterval(fetchTitle, 20000); }
-function stopTitlePolling() { clearInterval(npTimer); npTimer = null; showTitle(''); }
 
 const WX = (c) => c === 0 ? ['☀️', 'Despejado'] : c === 1 ? ['🌤️', 'Mayormente despejado'] : c === 2 ? ['⛅', 'Parcialmente nublado'] : c === 3 ? ['☁️', 'Nublado']
   : (c === 45 || c === 48) ? ['🌫️', 'Niebla'] : (c >= 51 && c <= 57) ? ['🌦️', 'Llovizna']
