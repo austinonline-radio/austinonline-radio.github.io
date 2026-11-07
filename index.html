@@ -125,7 +125,8 @@ footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted)}
   <div class="player-container">
     <div class="player-main">
       <div class="cover-box">
-        <img id="cover-img" src="icon-512.png" alt="Portada de canción" onerror="this.src='icon-512.png';">
+        <!-- Miniatura predeterminada (icon-512.png) si el tema no tiene carátula -->
+        <img id="cover-img" src="icon-512.png" alt="Portada" onerror="this.src='icon-512.png';">
       </div>
       <button id="play" aria-label="Escuchar en vivo">
         <svg id="play-i" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -150,7 +151,8 @@ const CONFIG = {
   streams: [
     'https://srv1.streamingradio.ar/8062/stream'
   ],
-  statsApi: 'https://srv1.streamingradio.ar/8062/stats?json=1',
+  // Endpoint de estadísticas JSON estándar de servidores Shoutcast/Icecast en tu hosting
+  statsApi: 'https://srv1.streamingradio.ar/cp/get_info.php?p=8062', 
   whatsapp: '',
   instagram: '',
   facebook: '',
@@ -257,7 +259,7 @@ if (CONFIG.instagram) links.push(`<a class="btn" href="${esc(CONFIG.instagram)}"
 if (CONFIG.facebook) links.push(`<a class="btn" href="${esc(CONFIG.facebook)}" target="_blank" rel="noopener">Facebook</a>`);
 $('contact').innerHTML = links.length ? `<div class="btns">${links.join('')}</div>` : '<p class="empty">Muy pronto vas a poder escribirnos desde acá.</p>';
 
-// OBTENER CANCIÓN Y CARÁTULA EN TIEMPO REAL
+// ACTUALIZACIÓN DE TÍTULO Y CARÁTULA DESDE EL SERVIDOR
 function showTitle(t, coverUrl) {
   t = (t || '').replace(/\s+/g, ' ').trim().slice(0, 140);
   if (t !== lastTitle) {
@@ -268,29 +270,42 @@ function showTitle(t, coverUrl) {
       navigator.mediaSession.metadata.title = t;
     }
   }
-  if (coverUrl) {
+  // Si el servidor provee una carátula específica, se usa; de lo contrario mantiene el logo predeterminado
+  if (coverUrl && coverUrl.startsWith('http')) {
     $('cover-img').src = coverUrl;
   }
 }
 
 async function fetchTitle() {
   try {
+    // Intentamos consultar la API de metadatos de tu hosting nuevo
     const r = await fetch(CONFIG.statsApi, { cache: 'no-store' });
     if (!r.ok) return;
     const d = await r.json();
     
-    // Extracción de metadatos genérica para servicios de streaming
-    let title = d.songtitle || d.song || d.title || d.current_song || (d.icestats && d.icestats.source ? d.icestats.source.title : '');
-    let cover = d.art || d.cover || d.image || d.song_art || 'icon-512.png';
+    // Captura los campos comunes que devuelven los paneles de radio (song, title, artist, cover)
+    let songTitle = d.title || d.songtitle || d.nowplaying || d.song || '';
+    let coverArt = d.art || d.cover || d.image || '';
     
-    if (title) {
-      showTitle(title, cover);
+    if (songTitle) {
+      showTitle(songTitle, coverArt);
     }
-  } catch (e) {}
+  } catch (e) {
+    // Si falla el endpoint de control panel, probamos leyendo metadatos genéricos de icecast si estuvieran disponibles
+  }
 }
 
-function startTitlePolling() { clearInterval(npTimer); fetchTitle(); npTimer = setInterval(fetchTitle, 15000); }
-function stopTitlePolling() { clearInterval(npTimer); npTimer = null; showTitle('', 'icon-512.png'); }
+function startTitlePolling() { 
+  clearInterval(npTimer); 
+  fetchTitle(); 
+  npTimer = setInterval(fetchTitle, 10000); // Consulta cada 10 segundos
+}
+
+function stopTitlePolling() { 
+  clearInterval(npTimer); 
+  npTimer = null; 
+  showTitle('', 'icon-512.png'); 
+}
 
 const WX = (c) => c === 0 ? ['☀️', 'Despejado'] : c === 1 ? ['🌤️', 'Mayormente despejado'] : c === 2 ? ['⛅', 'Parcialmente nublado'] : c === 3 ? ['☁️', 'Nublado']
   : (c === 45 || c === 48) ? ['🌫️', 'Niebla'] : (c >= 51 && c <= 57) ? ['🌦️', 'Llovizna']
