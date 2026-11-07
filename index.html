@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Austin Radio Online</title>
 <style>
-:root{--bg:#0F0F12;--surface:#1E1E24;--primary:#FF2D3A;--primary-hover:#E6232E;--accent:#FF6B35;--text:#F4F4F5;--muted:#A8A8B3;--border:#2A2A32;
+:root{--bg:#0F0F12;--surface:#1E1E24;--primary:#FF2D3A;--primary-hover:#E6232E;--accent:#FF2D3A;--text:#F4F4F5;--muted:#A8A8B3;--border:#2A2A32;
 color-scheme:dark;box-sizing:border-box}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding-bottom:130px;-webkit-tap-highlight-color:transparent}
@@ -96,7 +96,7 @@ footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted)}
 
   <div class="hero">
     <svg class="equalizer-icon" viewBox="0 0 46 38" aria-hidden="true">
-      <g fill="#FF6B35">
+      <g fill="var(--primary)">
         <rect x="0" y="22" width="5" height="16" rx="2"/>
         <rect x="7" y="14" width="5" height="24" rx="2"/>
         <rect x="14" y="6" width="5" height="32" rx="2"/>
@@ -125,7 +125,6 @@ footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted)}
   <div class="player-container">
     <div class="player-main">
       <div class="cover-box">
-        <!-- Miniatura predeterminada (icon-512.png) si el tema no tiene carátula -->
         <img id="cover-img" src="icon-512.png" alt="Portada" onerror="this.src='icon-512.png';">
       </div>
       <button id="play" aria-label="Escuchar en vivo">
@@ -151,7 +150,6 @@ const CONFIG = {
   streams: [
     'https://srv1.streamingradio.ar/8062/stream'
   ],
-  // Endpoint de estadísticas JSON estándar de servidores Shoutcast/Icecast en tu hosting
   statsApi: 'https://srv1.streamingradio.ar/cp/get_info.php?p=8062', 
   whatsapp: '',
   instagram: '',
@@ -259,7 +257,6 @@ if (CONFIG.instagram) links.push(`<a class="btn" href="${esc(CONFIG.instagram)}"
 if (CONFIG.facebook) links.push(`<a class="btn" href="${esc(CONFIG.facebook)}" target="_blank" rel="noopener">Facebook</a>`);
 $('contact').innerHTML = links.length ? `<div class="btns">${links.join('')}</div>` : '<p class="empty">Muy pronto vas a poder escribirnos desde acá.</p>';
 
-// ACTUALIZACIÓN DE TÍTULO Y CARÁTULA DESDE EL SERVIDOR
 function showTitle(t, coverUrl) {
   t = (t || '').replace(/\s+/g, ' ').trim().slice(0, 140);
   if (t !== lastTitle) {
@@ -270,7 +267,6 @@ function showTitle(t, coverUrl) {
       navigator.mediaSession.metadata.title = t;
     }
   }
-  // Si el servidor provee una carátula específica, se usa; de lo contrario mantiene el logo predeterminado
   if (coverUrl && coverUrl.startsWith('http')) {
     $('cover-img').src = coverUrl;
   }
@@ -278,27 +274,21 @@ function showTitle(t, coverUrl) {
 
 async function fetchTitle() {
   try {
-    // Intentamos consultar la API de metadatos de tu hosting nuevo
     const r = await fetch(CONFIG.statsApi, { cache: 'no-store' });
     if (!r.ok) return;
     const d = await r.json();
-    
-    // Captura los campos comunes que devuelven los paneles de radio (song, title, artist, cover)
     let songTitle = d.title || d.songtitle || d.nowplaying || d.song || '';
     let coverArt = d.art || d.cover || d.image || '';
-    
     if (songTitle) {
       showTitle(songTitle, coverArt);
     }
-  } catch (e) {
-    // Si falla el endpoint de control panel, probamos leyendo metadatos genéricos de icecast si estuvieran disponibles
-  }
+  } catch (e) {}
 }
 
 function startTitlePolling() { 
   clearInterval(npTimer); 
   fetchTitle(); 
-  npTimer = setInterval(fetchTitle, 10000); // Consulta cada 10 segundos
+  npTimer = setInterval(fetchTitle, 10000); 
 }
 
 function stopTitlePolling() { 
