@@ -14,14 +14,14 @@
 :root{--bg:#0F0F12;--surface:#1E1E24;--primary:#FF2D3A;--primary-hover:#E6232E;--accent:#FF6B35;--text:#F4F4F5;--muted:#A8A8B3;--border:#2A2A32;
 color-scheme:dark;box-sizing:border-box}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding-bottom:120px;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;padding-bottom:130px;-webkit-tap-highlight-color:transparent}
 .app{max-width:440px;margin:0 auto;padding:20px}
 
-/* Encabezado: Logo a la izquierda y Clima a la derecha */
+/* Encabezado: Logo a la izquierda (en 2 líneas) y Clima a la derecha */
 header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 16px}
-.header-brand{display:flex;align-items:center;gap:8px}
-.header-logo-text{font-weight:900;font-size:20px;letter-spacing:-0.5px;line-height:1;text-transform:lowercase}
-.header-tag{display:inline-block;background:var(--accent);color:#0F0F12;font-weight:800;font-size:10px;padding:2px 6px;border-radius:3px;transform:rotate(-3deg)}
+.header-brand{display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+.header-logo-text{font-weight:900;font-size:22px;letter-spacing:-0.5px;line-height:1;text-transform:lowercase}
+.header-tag{display:inline-block;background:var(--accent);color:#FFFFFF;font-weight:800;font-size:10px;padding:2px 6px;border-radius:3px;margin-top:2px;transform:rotate(-2deg)}
 
 .wxh{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--text);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:700;cursor:pointer}
 .wxh[hidden]{display:none}
@@ -31,7 +31,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:8px
 .equalizer-icon{width:140px;height:90px;margin-bottom:20px}
 .brand-main{display:flex;flex-direction:column;align-items:center;gap:8px}
 .logo-text{font-weight:900;font-size:42px;letter-spacing:-1.5px;line-height:1;text-transform:lowercase}
-.tag{display:inline-block;background:var(--accent);color:#0F0F12;font-weight:800;font-size:14px;padding:4px 12px;border-radius:4px;transform:rotate(-3deg)}
+.tag{display:inline-block;background:var(--accent);color:#FFFFFF;font-weight:800;font-size:14px;padding:4px 12px;border-radius:4px;transform:rotate(-3deg)}
 
 /* Widgets e Información */
 .wx{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin:0 0 16px}
@@ -46,10 +46,13 @@ h2{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mute
 .btn{flex:1;min-width:130px;text-align:center;text-decoration:none;color:var(--text);border:1px solid var(--text);border-radius:12px;padding:12px;font-size:14px;font-weight:600}
 .btn.wa{background:var(--primary);border-color:var(--primary)}
 
-/* Reproductor Fijo en la parte Inferior */
+/* Reproductor Fijo en la parte Inferior con Miniatura */
 .player-bar{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;z-index:1000;box-shadow:0 -5px 20px rgba(0,0,0,.5)}
 .player-container{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
 .player-main{display:flex;align-items:center;gap:12px}
+
+.cover-box{width:48px;height:48px;min-width:48px;border-radius:8px;overflow:hidden;background:#2A2A32;display:flex;align-items:center;justify-content:center;border:1px solid var(--border)}
+.cover-box img{width:100%;height:100%;object-fit:cover;display:block}
 
 #play{width:48px;height:48px;min-width:48px;border-radius:50%;border:0;background:var(--primary);color:#fff;display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 12px rgba(255,45,58,.4);transition:transform .15s}
 #play:active{transform:scale(.95)}
@@ -64,7 +67,7 @@ h2{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mute
 .on .live-badge{color:var(--text)}
 
 #status{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.np{font-size:12px;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np{font-size:12px;color:var(--accent);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .np[hidden]{display:none}
 
 .controls-row{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted)}
@@ -121,6 +124,9 @@ footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted)}
 <div class="player-bar">
   <div class="player-container">
     <div class="player-main">
+      <div class="cover-box">
+        <img id="cover-img" src="icon-512.png" alt="Portada de canción" onerror="this.src='icon-512.png';">
+      </div>
       <button id="play" aria-label="Escuchar en vivo">
         <svg id="play-i" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         <svg id="pause-i" viewBox="0 0 24 24"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
@@ -144,17 +150,17 @@ const CONFIG = {
   streams: [
     'https://srv1.streamingradio.ar/8062/stream'
   ],
+  statsApi: 'https://srv1.streamingradio.ar/8062/stats?json=1',
   whatsapp: '',
   instagram: '',
   facebook: '',
   schedule: [],
-  nowPlaying: [],
   weather: { city: 'Cruz del Eje', lat: -30.7256, lon: -64.8067 }
 };
 
 const $ = (id) => document.getElementById(id);
 let audio = new Audio();
-let playing = false, retries = 0, sleepTimer = null;
+let playing = false, retries = 0, sleepTimer = null, npTimer = null, lastTitle = '';
 
 function setStatus(t) { $('status').textContent = t; }
 function paint() {
@@ -181,6 +187,7 @@ function start() {
 
 function stop(msg) {
   playing = false;
+  stopTitlePolling();
   if (audio) {
     audio.pause();
     audio.removeAttribute('src');
@@ -204,6 +211,7 @@ function fail() {
 audio.addEventListener('playing', () => {
   retries = 0; 
   setStatus('Escuchando en vivo');
+  if (!npTimer) startTitlePolling();
 });
 audio.addEventListener('waiting', () => playing && setStatus('Conectando…'));
 audio.addEventListener('error', fail);
@@ -248,6 +256,41 @@ if (CONFIG.whatsapp) links.push(`<a class="btn wa" href="https://wa.me/${esc(CON
 if (CONFIG.instagram) links.push(`<a class="btn" href="${esc(CONFIG.instagram)}" target="_blank" rel="noopener">Instagram</a>`);
 if (CONFIG.facebook) links.push(`<a class="btn" href="${esc(CONFIG.facebook)}" target="_blank" rel="noopener">Facebook</a>`);
 $('contact').innerHTML = links.length ? `<div class="btns">${links.join('')}</div>` : '<p class="empty">Muy pronto vas a poder escribirnos desde acá.</p>';
+
+// OBTENER CANCIÓN Y CARÁTULA EN TIEMPO REAL
+function showTitle(t, coverUrl) {
+  t = (t || '').replace(/\s+/g, ' ').trim().slice(0, 140);
+  if (t !== lastTitle) {
+    lastTitle = t;
+    $('np').textContent = t ? '♪ ' + t : '';
+    $('np').hidden = !t;
+    if ('mediaSession' in navigator && t) {
+      navigator.mediaSession.metadata.title = t;
+    }
+  }
+  if (coverUrl) {
+    $('cover-img').src = coverUrl;
+  }
+}
+
+async function fetchTitle() {
+  try {
+    const r = await fetch(CONFIG.statsApi, { cache: 'no-store' });
+    if (!r.ok) return;
+    const d = await r.json();
+    
+    // Extracción de metadatos genérica para servicios de streaming
+    let title = d.songtitle || d.song || d.title || d.current_song || (d.icestats && d.icestats.source ? d.icestats.source.title : '');
+    let cover = d.art || d.cover || d.image || d.song_art || 'icon-512.png';
+    
+    if (title) {
+      showTitle(title, cover);
+    }
+  } catch (e) {}
+}
+
+function startTitlePolling() { clearInterval(npTimer); fetchTitle(); npTimer = setInterval(fetchTitle, 15000); }
+function stopTitlePolling() { clearInterval(npTimer); npTimer = null; showTitle('', 'icon-512.png'); }
 
 const WX = (c) => c === 0 ? ['☀️', 'Despejado'] : c === 1 ? ['🌤️', 'Mayormente despejado'] : c === 2 ? ['⛅', 'Parcialmente nublado'] : c === 3 ? ['☁️', 'Nublado']
   : (c === 45 || c === 48) ? ['🌫️', 'Niebla'] : (c >= 51 && c <= 57) ? ['🌦️', 'Llovizna']
