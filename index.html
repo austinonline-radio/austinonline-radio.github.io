@@ -43,24 +43,25 @@ h2{font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mute
 .item b{color:var(--accent);min-width:52px}
 .empty{color:var(--muted);font-size:14px;border:1px dashed var(--border);border-radius:14px;padding:16px;text-align:center}
 
-/* CARRUSEL PUBLICITARIO CON MOVIMIENTO Y LOGO */
+/* CARRUSEL PUBLICITARIO CON MOVIMIENTO */
 .ads-wrapper{margin:24px 0;background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
 .ads-header{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:#15151A;border-bottom:1px solid var(--border);font-size:11px;color:var(--muted);font-weight:700}
 .ads-nav-btns{display:flex;gap:6px}
 .ads-nav-btn{background:transparent;border:0;color:var(--muted);font-size:12px;cursor:pointer;padding:2px 6px;border-radius:4px}
 .ads-nav-btn:hover{color:#fff;background:var(--border)}
 
-.slider-container{position:relative;width:100%;min-height:160px;overflow:hidden}
+.slider-container{position:relative;width:100%;min-height:150px;overflow:hidden}
 .slide{display:none;padding:18px;text-align:center;animation:fade .5s ease-in-out}
 .slide.active{display:block}
 
 @keyframes fade{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
 
-/* Estilo Anuncio 1: Grupo Moyano con Logo */
-.slide-moyano{background:linear-gradient(135deg, #18191E 0%, #282C34 100%);display:flex;flex-direction:column;align-items:center}
-.moyano-logo-img{max-width:180px;height:auto;margin-bottom:8px;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5))}
-.moyano-address{font-size:12px;color:var(--text);margin-bottom:12px;background:rgba(255,255,255,0.08);display:inline-block;padding:4px 12px;border-radius:20px;border:1px solid var(--border)}
-.btn-sponsor{display:inline-block;background:var(--primary);color:#FFF;text-decoration:none;font-weight:800;font-size:13px;padding:8px 18px;border-radius:10px;box-shadow:0 4px 12px rgba(255,45,58,0.3)}
+/* Estilo Anuncio 1: Grupo Moyano */
+.slide-moyano{background:linear-gradient(135deg, #1E1E24 0%, #252830 100%)}
+.moyano-title{font-size:18px;font-weight:900;letter-spacing:1px;color:#FFF;margin-bottom:2px}
+.moyano-sub{font-size:11px;color:var(--primary);letter-spacing:2px;font-weight:800;text-transform:uppercase;margin-bottom:10px}
+.moyano-address{font-size:13px;color:var(--text);margin-bottom:14px;background:rgba(255,255,255,0.05);display:inline-block;padding:4px 12px;border-radius:20px;border:1px solid var(--border)}
+.btn-sponsor{display:inline-block;background:var(--text);color:#0F0F12;text-decoration:none;font-weight:800;font-size:13px;padding:8px 16px;border-radius:10px}
 
 /* Estilo Anuncio 2: Donación */
 .slide-donate{background:linear-gradient(135deg, #1E1E24 0%, #2A1A1E 100%)}
@@ -153,12 +154,12 @@ footer{margin-top:24px;text-align:center;font-size:12px;color:var(--muted)}
       </div>
     </div>
     <div class="slider-container">
-      <!-- SLIDE 1: GRUPO MOYANO CON LOGO -->
+      <!-- SLIDE 1: GRUPO MOYANO -->
       <div class="slide slide-moyano active">
-        <!-- Reemplaza 'grupo-moyano-logo.png' con el nombre de tu archivo de logo -->
-        <img class="moyano-logo-img" src="grupo-moyano-logo.png" alt="Grupo Moyano Gestoría del Automotor" onerror="this.onerror=null; this.src='https://i.ibb.co/6yVnKzV/grupo-moyano.png';">
+        <div class="moyano-title">GRUPO MOYANO</div>
+        <div class="moyano-sub">Gestoría del Automotor</div>
         <div class="moyano-address">📍 España 244 · Cruz del Eje</div><br>
-        <a class="btn-sponsor" href="https://wa.me/5493549000000?text=Hola!%20Contacto%20desde%20Austin%20Radio%20Online" target="_blank" rel="noopener">Consultar WhatsApp</a>
+        <a class="btn-sponsor" href="https://wa.me/5493549000000?text=Hola!%20Vengo%20desde%20Austin%20Radio%20Online" target="_blank" rel="noopener">Consultar Ahora</a>
       </div>
 
       <!-- SLIDE 2: DONACIONES -->
@@ -251,7 +252,7 @@ $('vol').addEventListener('input', (e) => { if(audio) audio.volume = e.target.va
 // CONTROL DEL CARRUSEL ANIMADO
 let currentSlide = 0;
 const slides = document.querySelectorAll('.slide');
-let slideInterval = setInterval(nextSlide, 6000);
+let slideInterval = setInterval(nextSlide, 6000); // Cambia cada 6 segundos
 
 function showSlide(index) {
   slides.forEach((s) => s.classList.remove('active'));
@@ -263,6 +264,7 @@ function showSlide(index) {
 function nextSlide() { showSlide(currentSlide + 1); }
 function prevSlide() { showSlide(currentSlide - 1); }
 
+// Pausar rotación al pasar el mouse o tocar
 const container = $('adsContainer');
 container.addEventListener('mouseenter', () => clearInterval(slideInterval));
 container.addEventListener('mouseleave', () => slideInterval = setInterval(nextSlide, 6000));
